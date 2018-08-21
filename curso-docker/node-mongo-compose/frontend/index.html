@@ -39,7 +39,10 @@
             const renderRows = clients => {
                 const rows = clients.map(client => {
                     const updateButton = createButton('Atualizar', 'Warning')
+                    updateButton.click(() => loadClient(client))
+
                     const removeButton = createButton('Excluir', 'Danger')
+                    removeButton.click(() => removeCLient(client))
 
                     return $('<tr>')
                         .append($('<td>').append(client.name))
@@ -49,11 +52,25 @@
                 $('#clientsrows').html(rows)
             }
 
+            const loadClient = client => {
+                $('[name-id]').val(client._id)
+                $('[name=name]').val(client.name)
+            }
+
+            const removeCLient = client => {
+                $.ajax({
+                    method: 'DELETE',
+                    url: `${API}/clients/${client._id}`,
+                    success: getClients
+                })
+            }
+
             const getClients = () => {
                 $.ajax({
                     url: `${API}/clients`,
-                    sucess: clients => {
+                    success: clients => {
                         renderRows(clients)
+                        $('[name]').val('')
                     }
                 })
             }
